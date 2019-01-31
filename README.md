@@ -2,6 +2,8 @@
 This is a SOCKS Proxy Checker
 Checks an IP:Port list of SOCKS4/5 and outputs working proxies to a file.
 
+For Contact Go To End...
+
 ### HOW To RUN
 To Run type 
 ```
@@ -43,7 +45,7 @@ You can Also Use My SOCKS List to get New SOCKS Proxy ...
 
 It Gets Updated Every 24 hours
 
-SOCKER Link : https://github.com/TheSpeedX/SOCKS-List
+SOCKS-List Link : https://github.com/TheSpeedX/SOCKS-List
 
 <a href="https://github.com/TheSpeedX/SOCKS-List">Click Here To Go To SOCK List Page</a>
 
@@ -56,11 +58,12 @@ curl -LO https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks.txt
 
  NOTE: It is Only For Educational Purposes. Neither I Say Nor I Promote To Do Anything Illegal.
 
- For Any Queries Mail Me!!!
- 
-           Mail: ggspeedx29@gmail.com
-           
-  Facebook Page: https://www.facebook.com/GyanaTech
+ For Any Queries Join Me On WhatsApp!!!
+          Group Link: http://bit.do/thespeedxgit
+  <a href="http://bit.do/thespeedxgit">Join My Group</a>
+
+           YouTube Channel: https://www.youtube.com/c/GyanaTech
+  <a href="https://www.youtube.com/c/GyanaTech">Check My Channel</a>
   
   To Support Me By Either Helping In Project Or Donating Small Amount To Me For That Contact Me By
           
@@ -70,8 +73,11 @@ curl -LO https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks.txt
 
 # CONTACT
 
- For Any Queries Mail Me!!!
- 
+ For Any Queries Join Me On WhatsApp!!!
+          Group Link: http://bit.do/thespeedxgit
+  <a href="http://bit.do/thespeedxgit">Join My Group</a>
+
            Mail: ggspeedx29@gmail.com
-           
-        Facebook Page: https://www.facebook.com/GyanaTech
+
+           YouTube Channel: https://www.youtube.com/c/GyanaTech
+  <a href="https://www.youtube.com/c/GyanaTech">Check My Channel</a>
