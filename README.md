@@ -59,8 +59,8 @@ curl -LO https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks.txt
  NOTE: It is Only For Educational Purposes. Neither I Say Nor I Promote To Do Anything Illegal.
 
  For Any Queries Join Me On WhatsApp!!!
-          Group Link: http://bit.do/thespeedx
-  <a href="http://bit.do/thespeedx">Join My Group</a>
+          Group Link: http://bit.do/speedxgit
+  <a href="http://bit.do/speedxgit">Join My Group</a>
 
            YouTube Channel: https://www.youtube.com/c/GyanaTech
   <a href="https://www.youtube.com/c/GyanaTech">Check My Channel</a>
@@ -74,8 +74,8 @@ curl -LO https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks.txt
 # CONTACT
 
  For Any Queries Join Me On WhatsApp!!!
-          Group Link: http://bit.do/thespeedx
-  <a href="http://bit.do/thespeedx">Join My Group</a>
+          Group Link: http://bit.do/speedxgit
+  <a href="http://bit.do/speedxgit">Join My Group</a>
 
            Mail: ggspeedx29@gmail.com
 
