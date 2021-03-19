@@ -1,83 +1,51 @@
 # SOCKER
-This is a SOCKS Proxy Checker
-Checks an IP:Port list of SOCKS4/5 and outputs working proxies to a file.
-
-For Contact Go To End...
+Checks for valid SOCKS4/5 proxies.
+This code is Python3 port of [SOCKS-Proxy-Checker](https://github.com/BeastsMC/SOCKS-Proxy-Checker/) which was writtern in Python2
+This code runs on python3.
 
 ### HOW To RUN
-To Run type 
-```
-python2 socker.py
-```
 For Help Type
 ```
-python2 socker.py help
+python3 socker.py -h
 ```
 Command Line Usage:
 ```
-python2 socker.py <socks_file_list> <file_to_write> <threads> <timeout>
+python3 socker.py -i <proxy_file_list> -o <file_to_write> -th <threads> -t <timeout>
 ```
-
+You can use the auto mode for fetching proxies from default APIs.
+```
+python3 socker.py -auto -o <file_to_write> -th <threads> -t <timeout>
+```
+You can use the URL mode to add new urls to fetch proxies.
+```
+python3 socker.py -u proxlylist1.site -u proxlylist2.site -o <file_to_write> -th <threads> -t <timeout>
+```
+All the parameters are optional.  
+File, Auto, URL modes can be used simulaenously to gather more proxies.  
+The default thread count is 30 and timeout is 5 seconds.  
 ### SOME TERMS:
+Proxy list - An absolute path to the file containing a list of proxies in the of IP:Port  
 
-Proxy list - An absolute path to the file containing a list of proxies in the of IP:Port
-
-Output file - An absolute path to the file that the live SOCKS4/5 proxies will be written to.
+Output file - An absolute path to the file that the live SOCKS4/5 proxies will be written to.  
 
 Threads - The number of threads that will be used to check proxies. More threads = quicker 
 scanning. If the thread count is too high, your internet connection may be interrupted and 
-false timeouts/connection refused errors will be printed.
+false timeouts/connection refused errors will be printed.  
 
 Timeout - The amount of time to give a potential proxy to repond before giving up and trying 
-the next.
-
+the next.  
 
 This script attempts to verify if a given IP:Port listing is a SOCKS4/5 proxy by completeing a 
 SOCKS4/5 handshake with it. In order to maintain the highest level of compatibility I could, I 
-did not use third part libraries and stuck with the default Python libraries. Also, I skipped 
-adding some 'fancy' features, such as a GUI.
-
-
-
+did not use third party libraries and stuck with the default Python libraries.
 # SOCKSLIST
 
-You can Also Use My SOCKS List to get New SOCKS Proxy ...
+You can Also Use My PROXY List to get New SOCKS Proxy. It Gets Updated Every 24 hours.
 
-It Gets Updated Every 24 hours
+PROXY-List Link : [https://github.com/TheSpeedX/PROXY-List](https://github.com/TheSpeedX/PROXY-List)
 
-SOCKS-List Link : https://github.com/TheSpeedX/SOCKS-List
-
-<a href="https://github.com/TheSpeedX/SOCKS-List">Click Here To Go To SOCK List Page</a>
-
-You Can Also Directly Type this to get SOCKS-List (Make Sure You Have curl installed)
-```
-curl -LO https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks.txt
-```
-
-# NOTES
-
- NOTE: It is Only For Educational Purposes. Neither I Say Nor I Promote To Do Anything Illegal.
-
- For Any Queries Join Me On WhatsApp!!!
-          Group Link: http://bit.do/speedxgit
-  <a href="http://bit.do/speedxgit">Join My Group</a>
-
-           YouTube Channel: https://www.youtube.com/c/GyanaTech
-  <a href="https://www.youtube.com/c/GyanaTech">Check My Channel</a>
-  
-  To Support Me By Either Helping In Project Or Donating Small Amount To Me For That Contact Me By
-          
-          Mail: ggspeedx29@gmail.com
-          
- That's All !!!
 
 # CONTACT
 
- For Any Queries Join Me On WhatsApp!!!
-          Group Link: http://bit.do/speedxgit
-  <a href="http://bit.do/speedxgit">Join My Group</a>
-
-           Mail: ggspeedx29@gmail.com
-
-           YouTube Channel: https://www.youtube.com/c/GyanaTech
-  <a href="https://www.youtube.com/c/GyanaTech">Check My Channel</a>
+ For Any Queries:  
+        Ping Me : [Telegram](http://t.me/the_space_bar)
