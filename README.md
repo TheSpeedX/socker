@@ -1,6 +1,6 @@
 # SOCKER
-Checks for valid SOCKS4/5 proxies.
-This code is Python3 port of [SOCKS-Proxy-Checker](https://github.com/BeastsMC/SOCKS-Proxy-Checker/) which was writtern in Python2
+Checks for valid SOCKS4 & SOCKS5 proxies.
+This code is Python3 port of [SOCKS-Proxy-Checker](https://github.com/BeastsMC/SOCKS-Proxy-Checker/) which was written in Python2
 This code runs on python3.
 
 ### HOW To RUN
