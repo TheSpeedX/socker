@@ -228,8 +228,8 @@ if __name__ == "__main__":
     else:
         proxies = []
         proxy_api = [
-            "https://api.proxyscrape.com/?request=getproxies&timeout=5000&country=all&ssl=all&proxytype=socks4&anonymity=all",
-            "https://api.proxyscrape.com/?request=getproxies&timeout=5000&country=all&ssl=all&proxytype=socks5&anonymity=all"
+            "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks4.txt",
+            "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt"
         ]
         if args.input:
             proxies.extend(get_proxies(args.input))
