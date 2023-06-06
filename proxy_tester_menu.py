@@ -2,6 +2,7 @@ import contextlib
 import time
 import requests
 import os
+import concurrent.futures
 
 DEFAULT_DOMAIN = "www.google.com"
 
@@ -18,24 +19,22 @@ def test_proxy(ip, domain=DEFAULT_DOMAIN):
     return False
 
 
-def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN):
+def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN, num_threads=10):
     with open(ip_file, "r") as file:
         ip_addresses = file.read().splitlines()
 
     results = []
 
-    for i, ip in enumerate(ip_addresses, start=1):
-        is_working = test_proxy(ip, domain=domain)
-        status = "Active" if is_working else "Inactive"
-        results.append((ip, status))
-
-        progress = i / len(ip_addresses) * 100
-        print(
-            f'\rTesting - Progress: {progress:.1f}% | {"." * (i % 4)}    ',
-            end="",
-            flush=True,
-        )
-        time.sleep(0.1)  # Add a slight delay to simulate animation
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+        future_to_ip = {executor.submit(test_proxy, ip, domain): ip for ip in ip_addresses}
+        for future in concurrent.futures.as_completed(future_to_ip):
+            ip = future_to_ip[future]
+            try:
+                is_working = future.result()
+                status = "Active" if is_working else "Inactive"
+                results.append((ip, status))
+            except Exception as e:
+                print(f"An error occurred while testing {ip}: {e}")
 
     with open(output_file, "w") as file:
         for ip, status in results:
@@ -84,6 +83,19 @@ def get_domain_choice():
     return domain_choice.strip() or DEFAULT_DOMAIN
 
 
+def get_num_threads():
+    num_threads = input("Enter the number of threads to use for testing (default: 10): ")
+    try:
+        num_threads = int(num_threads)
+        if num_threads <= 0:
+            print("Invalid number of threads. Using the default value.")
+            num_threads = 10
+    except ValueError:
+        print("Invalid input. Using the default number of threads.")
+        num_threads = 10
+    return num_threads
+
+
 def main():
     if not check_input_files():
         return
@@ -99,7 +111,10 @@ def main():
     domain = get_domain_choice()
     print(f"Using domain: {domain}")
 
-    test_ip_addresses(input_file, output_file, domain=domain)
+    num_threads = get_num_threads()
+    print(f"Using {num_threads} threads for testing.")
+
+    test_ip_addresses(input_file, output_file, domain=domain, num_threads=num_threads)
 
     print("Testing complete. Results saved to", output_file)
 
