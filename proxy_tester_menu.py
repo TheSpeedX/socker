@@ -1,41 +1,59 @@
 import contextlib
 import time
-import requests
 import os
+import argparse
+import concurrent.futures
+import subprocess
 
 DEFAULT_DOMAIN = "www.google.com"
 
 
 def test_proxy(ip, domain=DEFAULT_DOMAIN):
-    proxies = {
-        "http": f"http://{ip}",
-        "https": f"http://{ip}",
-    }
-    with contextlib.suppress(requests.RequestException):
-        response = requests.get(f"http://{domain}", proxies=proxies, timeout=5)
-        if response.status_code >= 200 and response.status_code < 300:
-            return True
-    return False
+    url = f"http://{domain}"
+    proxy_url = f"http://{ip}"
+    proxies = {'http': proxy_url, 'https': proxy_url}
+
+    try:
+        # Use subprocess to make requests using cURL
+        command = f"curl --connect-timeout 5 --max-time 5 --proxy {proxy_url} {url}"
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+        )
+
+        # Check if the request was successful
+        return result.returncode == 0
+    except subprocess.SubprocessError:
+        return False
 
 
-def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN):
+def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN, num_threads=10):
     with open(ip_file, "r") as file:
         ip_addresses = file.read().splitlines()
 
     results = []
 
-    for i, ip in enumerate(ip_addresses, start=1):
-        is_working = test_proxy(ip, domain=domain)
-        status = "Active" if is_working else "Inactive"
-        results.append((ip, status))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+        futures = []
+        for ip in ip_addresses:
+            future = executor.submit(test_proxy, ip, domain)
+            futures.append(future)
 
-        progress = i / len(ip_addresses) * 100
-        print(
-            f'\rTesting - Progress: {progress:.1f}% | {"." * (i % 4)}    ',
-            end="",
-            flush=True,
-        )
-        time.sleep(0.1)  # Add a slight delay to simulate animation
+        for i, future in enumerate(concurrent.futures.as_completed(futures), start=1):
+            ip = ip_addresses[i - 1]
+            is_working = future.result()
+            status = "Active" if is_working else "Inactive"
+            results.append((ip, status))
+
+            progress = i / len(ip_addresses) * 100
+            print(
+                f'\rTesting - Progress: {progress:.1f}% | {"." * (i % 4)}    ',
+                end="",
+                flush=True,
+            )
+            time.sleep(0.1)  # Add a slight delay to simulate animation
 
     with open(output_file, "w") as file:
         for ip, status in results:
@@ -84,6 +102,11 @@ def get_domain_choice():
     return domain_choice.strip() or DEFAULT_DOMAIN
 
 
+def get_num_threads():
+    num_threads = input("Enter the number of threads to use for testing (default: 10): ")
+    return int(num_threads.strip() or "10")
+
+
 def main():
     if not check_input_files():
         return
@@ -91,17 +114,11 @@ def main():
     display_menu()
     choice = get_user_choice()
     input_file = get_input_filename(choice)
-    output_file = "results.txt"
-
-    print("Testing in progress...")
-    time.sleep(1)  # Simulate a delay before starting the testing
-
+    output_file = "output.txt"
     domain = get_domain_choice()
-    print(f"Using domain: {domain}")
+    num_threads = get_num_threads()
 
-    test_ip_addresses(input_file, output_file, domain=domain)
-
-    print("Testing complete. Results saved to", output_file)
+    test_ip_addresses(input_file, output_file, domain, num_threads)
 
 
 if __name__ == "__main__":
