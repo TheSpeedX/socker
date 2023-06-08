@@ -1,6 +1,43 @@
-# Proxy Tester
 
-Proxy Tester is a Python script that tests the validity and performance of a list of proxies by sending HTTP requests to specified domains.
+
+## Proxy Tester
+
+The Proxy Tester script is designed to test the validity and response time of HTTP/HTTPS proxies. It uses the `faster_than_requests` library for faster proxy testing.
+
+### Prerequisites
+
+Make sure you have Python 3 installed on your system. You can download Python from the official website: [Python Downloads](https://www.python.org/downloads/)
+
+### Installation
+
+1. Clone the repository or download the script files to your local machine.
+2. Open a terminal or command prompt and navigate to the directory where the script files are located.
+3. Create a virtual environment (optional but recommended):
+   - Run `python3 -m venv env` to create a virtual environment named "env".
+   - Activate the virtual environment:
+     - On Windows: `.\env\Scripts\activate`
+     - On macOS/Linux: `source env/bin/activate`
+4. Install the required dependencies by running the following command:
+   ```
+   pip install -r requirements.txt
+   ```
+
+### Usage
+
+1. Prepare a text file containing a list of HTTP proxies. Each proxy should be in the format `host:port`, with each proxy on a new line. Save the file as `http.txt`.
+2. Prepare a text file containing a list of HTTPS proxies. Each proxy should be in the format `host:port`, with each proxy on a new line. Save the file as `https.txt`.
+3. Run the script using the following command:
+   ```
+   python proxy_tester_menu.py http.txt https.txt output.txt
+   ```
+   Replace `http.txt` and `https.txt` with the actual file names of your proxy lists. The results will be saved to `output.txt`.
+4. The script will start testing the proxies and display the progress and results in the terminal.
+5. Once the testing is complete, the results will be saved to the specified output file (`output.txt`).
+6. You can open the output file to view the results. Each line will contain the proxy address, response time, and validity status.
+
+Note: If you encounter any errors or issues, please ensure that the proxy files (`http.txt` and `https.txt`) are correctly formatted, and the proxy servers are accessible.
+
+
 
 ## Features
 
