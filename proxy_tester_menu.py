@@ -3,44 +3,57 @@ import time
 import os
 import argparse
 import concurrent.futures
-import urllib.request
-from urllib.error import URLError, HTTPError
-import ftreq
+import subprocess
 
 DEFAULT_DOMAIN = "www.google.com"
 
 
-def test_proxy(ip, domain=DEFAULT_DOMAIN, use_ftreq=False):
+def test_proxy(ip, domain=DEFAULT_DOMAIN):
     url = f"http://{domain}"
     proxy_url = f"http://{ip}"
-    opener = urllib.request.build_opener(urllib.request.ProxyHandler({'http': proxy_url, 'https': proxy_url}))
+    proxies = {'http': proxy_url, 'https': proxy_url}
 
     try:
-        if use_ftreq:
-            ftreq.get(url, opener=opener)
-        else:
-            urllib.request.urlopen(url, timeout=5, opener=opener)
-        return True
-    except (URLError, HTTPError):
+        # Use subprocess to make requests using cURL
+        command = f"curl --connect-timeout 5 --max-time 5 --proxy {proxy_url} {url}"
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+        )
+
+        # Check if the request was successful
+        return result.returncode == 0
+    except subprocess.SubprocessError:
         return False
 
 
-def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN, num_threads=10, use_ftreq=False):
+def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN, num_threads=10):
     with open(ip_file, "r") as file:
         ip_addresses = file.read().splitlines()
 
     results = []
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        future_to_ip = {executor.submit(test_proxy, ip, domain, use_ftreq): ip for ip in ip_addresses}
-        for future in concurrent.futures.as_completed(future_to_ip):
-            ip = future_to_ip[future]
-            try:
-                is_working = future.result()
-                status = "Active" if is_working else "Inactive"
-                results.append((ip, status))
-            except Exception as e:
-                print(f"An error occurred while testing {ip}: {e}")
+        futures = []
+        for ip in ip_addresses:
+            future = executor.submit(test_proxy, ip, domain)
+            futures.append(future)
+
+        for i, future in enumerate(concurrent.futures.as_completed(futures), start=1):
+            ip = ip_addresses[i - 1]
+            is_working = future.result()
+            status = "Active" if is_working else "Inactive"
+            results.append((ip, status))
+
+            progress = i / len(ip_addresses) * 100
+            print(
+                f'\rTesting - Progress: {progress:.1f}% | {"." * (i % 4)}    ',
+                end="",
+                flush=True,
+            )
+            time.sleep(0.1)  # Add a slight delay to simulate animation
 
     with open(output_file, "w") as file:
         for ip, status in results:
@@ -49,40 +62,63 @@ def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN, num_threads=1
     print("\rTesting complete.                  ")
 
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Proxy Tester")
-    parser.add_argument("input_file", type=str, help="Path to the input file containing IP addresses")
-    parser.add_argument("output_file", type=str, help="Path to the output file to save the results")
-    parser.add_argument("--domain", type=str, default=DEFAULT_DOMAIN,
-                        help="Domain to test the proxies on (default: www.google.com)")
-    parser.add_argument("--threads", type=int, default=10,
-                        help="Number of threads to use for testing (default: 10)")
-    parser.add_argument("--ftreq", action="store_true",
-                        help="Use faster-than-requests library for making requests (optional)")
-
-    return parser.parse_args()
+def display_menu():
+    print("Select a file to test:")
+    print("1. http.txt")
+    print("2. https.txt")
 
 
-def check_input_file(input_file):
-    if not os.path.exists(input_file) or not os.path.isfile(input_file):
-        print(f"Error: '{input_file}' file is missing or not found.")
+def get_user_choice():
+    while True:
+        choice = input("Enter your choice (1 or 2): ")
+        if choice in ["1", "2"]:
+            return choice
+        print("Invalid choice. Please try again.")
+
+
+def get_input_filename(choice):
+    if choice == "1":
+        return "http.txt"
+    elif choice == "2":
+        return "https.txt"
+
+
+def check_input_files():
+    http_file = "http.txt"
+    https_file = "https.txt"
+    if not os.path.exists(http_file) or not os.path.isfile(http_file):
+        print(f"Error: '{http_file}' file is missing or not found.")
+        return False
+    if not os.path.exists(https_file) or not os.path.isfile(https_file):
+        print(f"Error: '{https_file}' file is missing or not found.")
         return False
     return True
 
 
-def main():
-    args = parse_arguments()
+def get_domain_choice():
+    domain_choice = input(
+        "Enter the domain on which you want to test the proxies (default: www.google.com): "
+    )
+    return domain_choice.strip() or DEFAULT_DOMAIN
 
-    if not check_input_file(args.input_file):
+
+def get_num_threads():
+    num_threads = input("Enter the number of threads to use for testing (default: 10): ")
+    return int(num_threads.strip() or "10")
+
+
+def main():
+    if not check_input_files():
         return
 
-    print("Testing in progress...")
-    time.sleep(1)  # Simulate a delay before starting the testing
+    display_menu()
+    choice = get_user_choice()
+    input_file = get_input_filename(choice)
+    output_file = "output.txt"
+    domain = get_domain_choice()
+    num_threads = get_num_threads()
 
-    test_ip_addresses(args.input_file, args.output_file, domain=args.domain,
-                      num_threads=args.threads, use_ftreq=args.ftreq)
-
-    print("Testing complete. Results saved to", args.output_file)
+    test_ip_addresses(input_file, output_file, domain, num_threads)
 
 
 if __name__ == "__main__":
