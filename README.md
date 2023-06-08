@@ -1,3 +1,55 @@
+# Proxy Tester
+
+Proxy Tester is a Python script that tests the validity and performance of a list of proxies by sending HTTP requests to specified domains.
+
+## Features
+
+- Validates proxies by sending HTTP requests to specified domains.
+- Supports both HTTP and HTTPS proxies.
+- Multi-threaded for faster testing.
+- Configurable number of threads.
+- Customizable timeout for request.
+- Generates a report with the results.
+
+## Requirements
+
+- Python 3.6+
+- Packages listed in the `requirements.txt` file.
+
+## Usage
+
+1. Clone the repository:
+
+   ```shell
+   git clone https://github.com/your-username/proxy-tester.git
+   ```
+
+2. Install the required packages:
+
+   ```shell
+   pip install -r requirements.txt
+   ```
+
+3. Prepare your proxy list in the `input.txt` file, with each proxy URL on a new line.
+
+4. Run the script:
+
+   ```shell
+   python proxy_tester_menu.py input.txt output.txt
+   ```
+
+   - `input.txt` is the path to your input file containing the list of proxies.
+   - `output.txt` is the path to the output file where the test results will be saved.
+
+## Configuration
+
+You can modify the following settings in the `proxy_tester_menu.py` script:
+
+- `THREADS`: The number of threads to use for testing proxies.
+- `TIMEOUT`: The timeout for each request.
+
+
+
 # SOCKER
 
 Checks for valid SOCKS4 & SOCKS5 proxies.
