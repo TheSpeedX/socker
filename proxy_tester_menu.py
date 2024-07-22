@@ -2,9 +2,16 @@ import contextlib
 import time
 import requests
 import os
+import signal
 
 DEFAULT_DOMAIN = "www.google.com"
 
+results = []
+
+def save_results(output_file):
+    with open(output_file, "w") as file:
+        for ip, status in results:
+            file.write(f"{ip}\t{status}\n")
 
 def test_proxy(ip, domain=DEFAULT_DOMAIN):
     proxies = {
@@ -17,11 +24,11 @@ def test_proxy(ip, domain=DEFAULT_DOMAIN):
             return True
     return False
 
-
 def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN):
     with open(ip_file, "r") as file:
         ip_addresses = file.read().splitlines()
 
+    global results
     results = []
 
     for i, ip in enumerate(ip_addresses, start=1):
@@ -37,18 +44,14 @@ def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN):
         )
         time.sleep(0.1)  # Add a slight delay to simulate animation
 
-    with open(output_file, "w") as file:
-        for ip, status in results:
-            file.write(f"{ip}\t{status}\n")
+        save_results(output_file)
 
     print("\rTesting complete.                  ")
-
 
 def display_menu():
     print("Select a file to test:")
     print("1. http.txt")
     print("2. https.txt")
-
 
 def get_user_choice():
     while True:
@@ -57,13 +60,11 @@ def get_user_choice():
             return choice
         print("Invalid choice. Please try again.")
 
-
 def get_input_filename(choice):
     if choice == "1":
         return "http.txt"
     elif choice == "2":
         return "https.txt"
-
 
 def check_input_files():
     http_file = "http.txt"
@@ -76,17 +77,23 @@ def check_input_files():
         return False
     return True
 
-
 def get_domain_choice():
     domain_choice = input(
         "Enter the domain on which you want to test the proxies (default: www.google.com): "
     )
     return domain_choice.strip() or DEFAULT_DOMAIN
 
+def handle_exit(signal, frame):
+    print("\nExiting and saving results...")
+    save_results("results.txt")
+    exit(0)
 
 def main():
     if not check_input_files():
         return
+
+    signal.signal(signal.SIGINT, handle_exit)
+    signal.signal(signal.SIGTERM, handle_exit)
 
     display_menu()
     choice = get_user_choice()
@@ -102,7 +109,6 @@ def main():
     test_ip_addresses(input_file, output_file, domain=domain)
 
     print("Testing complete. Results saved to", output_file)
-
 
 if __name__ == "__main__":
     main()
