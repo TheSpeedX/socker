@@ -2,6 +2,7 @@ import contextlib
 import time
 import requests
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 DEFAULT_DOMAIN = "www.google.com"
 
@@ -18,30 +19,33 @@ def test_proxy(ip, domain=DEFAULT_DOMAIN):
     return False
 
 
-def test_ip_addresses(ip_file, output_file, domain=DEFAULT_DOMAIN):
+def test_ip_addresses_concurrent(ip_file, output_file, domain=DEFAULT_DOMAIN):
     with open(ip_file, "r") as file:
         ip_addresses = file.read().splitlines()
 
     results = []
 
-    for i, ip in enumerate(ip_addresses, start=1):
-        is_working = test_proxy(ip, domain=domain)
-        status = "Active" if is_working else "Inactive"
-        results.append((ip, status))
+    # Using ThreadPoolExecutor to test multiple proxies concurrently for better performance
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        # Submit each proxy test to the executor and store the future object along with the IP
+        future_to_ip = {executor.submit(test_proxy, ip, domain): ip for ip in ip_addresses}
+        for future in as_completed(future_to_ip):
+            ip = future_to_ip[future]
+            try:
+                # Get the result of the future and determine if the proxy is active or inactive
+                is_working = future.result()
+                status = "Active" if is_working else "Inactive"
+                results.append((ip, status))
+            except Exception as e:
+                # Handle any exceptions that occur during the proxy test
+                print(f"Error testing proxy {ip}: {e}")
 
-        progress = i / len(ip_addresses) * 100
-        print(
-            f'\rTesting - Progress: {progress:.1f}% | {"." * (i % 4)}    ',
-            end="",
-            flush=True,
-        )
-        time.sleep(0.1)  # Add a slight delay to simulate animation
-
+    # Write the results to the output file
     with open(output_file, "w") as file:
         for ip, status in results:
             file.write(f"{ip}\t{status}\n")
 
-    print("\rTesting complete.                  ")
+    print("Testing complete.")
 
 
 def display_menu():
@@ -68,10 +72,10 @@ def get_input_filename(choice):
 def check_input_files():
     http_file = "http.txt"
     https_file = "https.txt"
-    if not os.path.exists(http_file) or not os.path.isfile(http_file):
+    if not os.path.isfile(http_file):
         print(f"Error: '{http_file}' file is missing or not found.")
         return False
-    if not os.path.exists(https_file) or not os.path.isfile(https_file):
+    if not os.path.isfile(https_file):
         print(f"Error: '{https_file}' file is missing or not found.")
         return False
     return True
@@ -99,7 +103,7 @@ def main():
     domain = get_domain_choice()
     print(f"Using domain: {domain}")
 
-    test_ip_addresses(input_file, output_file, domain=domain)
+    test_ip_addresses_concurrent(input_file, output_file, domain=domain)
 
     print("Testing complete. Results saved to", output_file)
 
